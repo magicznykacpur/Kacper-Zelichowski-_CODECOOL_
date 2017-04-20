@@ -1,6 +1,7 @@
 input_list = input()
 number, conversion = input_list.split(" ")
 
+# While loop responsible for idiotproof behaviour.
 while conversion not in ["2", "10"] or number.isalpha() or number == " ":
     print("Wrong input. Try entering a number, and conversion system (2/10).")
     input_list = input()
@@ -10,7 +11,7 @@ else:
     conversion = int(conversion)
 
 
-
+# Binary to decimal converter function
 def bintodec(number):
     res = []
     decimal = number
@@ -21,6 +22,7 @@ def bintodec(number):
         res.insert(0, result)
     print("".join(str(x) for x in res))
 
+# Decimal to binary converter function
 def dectobin(number):
     binary = str(number)
     binary = list(binary)
@@ -35,7 +37,7 @@ def dectobin(number):
         y = y - 1
     print(decim)
 
-
+# Function calling
 if conversion == 2:
     dectobin(number)
 elif conversion == 10:
