@@ -1,93 +1,109 @@
 import sys
 import csv
-# Menu
-print("\nDictionary for a little programmer:\n")
-print("1) search explanation by apellation \n")
-print("2) add new definition \n")
-print("3) show all apellations alphabetically \n")
-print("4) show available definitions by first letter of apellation \n")
-print("0) exit \n")
-choice = input("Choose an option by typing a responsive number \n")
-
-definitions = {}
-
-# Main dictionary
-with open("dictionary.csv", "r", newline='') as f:
-    r = csv.reader(f, delimiter=' ')
-    for row in r:
-        definitions[row[0]] = row[1]
+import os
 
 
-# Saving the dictionary
-def writingcsv():
+def menu():
+    print("\nDictionary for a little programmer:\n")
+    print("1) search explanation by apellation \n")
+    print("2) add new definition \n")
+    print("3) show all apellations alphabetically \n")
+    print("4) show available definitions by first letter of apellation \n")
+    print("0) exit \n")
+
+
+def open_csv():
+    '''Opens a given csv file containing dictionary'''
+    definitions = {}
+    with open("dictionary.csv", "r", newline='') as f:
+        r = csv.reader(f, delimiter=' ')
+        for row in r:
+            definitions[row[0]] = (row[1], row[2])
+        return definitions
+
+
+def write_to_csv(defintions):
+    '''Writes given dictionary into a csv file'''
     with open("dictionary.csv", "w", newline='') as f:
         w = csv.writer(f, delimiter=' ')
-        for i in definitions:
-            w.writerow([i, definitions[i]])
+        for key in definitions:
+            w.writerow([key, definitions[key][0], definitions[key][1]])
 
 
-# Searching function. It's a function that searches.
-def searching():
-    search = input("Please enter an appellation:\n")
+def search_appelation(definitions):
+    '''Searches an appelation in dictionary and then prints it'''
+    search = input("\n\nPlease enter an appellation:\n\n")
     search = search.lower()
+    os.system('clear')
     if search in definitions:
-        return definitions[search]
+        return search + "\n"*2 + definitions[search][0] + "\n"*2 + definitions[search][1]
     else:
-        return "Sorry. We don't have a definition on that yet."
+        return "\n"*2 + "Sorry. We don't have a definition on that yet." + "\n"*2
 
 
-# New definition function. Based on variables.
-def newdefinition():
-    apel = input("Please enter the definition name (apellation)\n")
-    expl = input("Please enter the explanation\n")
-    sour = input("Please enter the source\n")
+def new_definition(definitions):
+    '''Creates a new definition in a dictionary'''
+    apel = input("\nPlease enter the definition name (apellation)\n")
+    expl = input("\nPlease enter the explanation\n")
+    sour = input("\nPlease enter the source\n")
     while apel == "" or expl == "" or sour == "":
         print("Sorry. Neither of those can be empty.")
-        apel = input("Please enter the definition name (apellation)\n")
-        expl = input("Please enter the explanation\n")
-        sour = input("Please enter the source\n")
+        apel = input("\nPlease enter the definition name (apellation)\n")
+        expl = input("\nPlease enter the explanation\n")
+        sour = input("\nPlease enter the source\n")
     else:
+        print("\n\n Definition added succesfully.")
         definitions[apel] = (expl, sour)
-        print("Congratulations!")
-        print("Your definitions looks like this:")
-        print(definitions[apel])
+        return definitions
 
 
-# Showing apellations alphabetically
-def apelalpha():
+def show_apels_alphabet(definitions):
+    '''Sorts and shows apellations in
+    alphabetical order'''
     keys = []
     for key in definitions:
         keys.append(key)
     keys = sorted(keys)
-    return keys
+    for key in keys:
+        print("\n" + key + "\n")
 
 
-def definitionsbylet():
+def show_definitions_by_letter(definitions):
+    ''' Shows definition starting with given letter'''
     defbylet = []
     let = input("Enter a letter:\n")
     for key in definitions:
         if key.startswith(let):
             defbylet.append(key)
     defbylet = sorted(defbylet)
-    return defbylet
+    for definition in defbylet:
+        print("\n" + definition + "\n")
 
 
-# Idiiotproofing the option selection
-while choice not in ["1", "2", "3", "4", "0"]:
+def main():
 
-    choice = input("Wrong input. Please select from following options (1, 2, 3, 4, 0)\n")
+    definitions = open_csv()
 
-# Calling functions from the choice variable`
-if choice == "1":
-    print(searching())
-elif choice == "2":
-    newdefinition()
-    writingcsv()
-elif choice == "3":
-    print(apelalpha())
-    print(searching())
-elif choice == "4":
-    print(definitionsbylet())
-    print(searching())
-elif choice == "0":
-        sys.exit
+    while True:
+
+        menu()
+        choice = input("Please enter a responsive number: ")
+
+        if choice == "1":
+            print(search_appelation(definitions))
+        elif choice == "2":
+            definitions = new_definition(definitions)
+            write_to_csv(definitions)
+        elif choice == "3":
+            show_apels_alphabet(definitions)
+            print(search_appelation(definitions))
+        elif choice == "4":
+            show_definitions_by_letter(definitions)
+            print(search_appelation(definitions))
+        elif choice == "0":
+                print("\nPleasure working with you! \n")
+                sys.exit()
+
+
+if __name__ == "__main__":
+    main()
